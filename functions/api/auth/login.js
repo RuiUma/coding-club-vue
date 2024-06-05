@@ -19,6 +19,14 @@ const onRequestPost = async (context) => {
     }))
 }
 
+const onRequestGet = async (context) => {
+    console.log('get called');
+    return new Response (JSON.stringify({
+        "status": "success",
+        "method": context,
+    }))
+}
 
 
-export { onRequestPost }
+
+export { onRequestPost, onRequestGet }

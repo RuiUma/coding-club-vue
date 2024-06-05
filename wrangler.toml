@@ -4,6 +4,14 @@ pages_build_output_dir = "./dist"
 # [[kv_namespaces]]
 # binding = "KV"
 # id = "<NAMESPACE_ID>"
+kv_namespaces = [
+  { binding = "TokenKV", id = "5e9a1653f2934cf3bc2616e23f515722" }
+]
+
+d1_databases = [
+  { binding = "user", database_name = "user", database_id = "85d5c6f6-58e3-43dd-9dca-6e2132097ee6" }
+]
+
 
 # [[d1_databases]]
 # binding = "DB"

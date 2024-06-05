@@ -27,7 +27,7 @@ let dateTimeList = []
 onMounted(async () => {
     dateTimeList = [
     {
-        date: '20240527',
+        date: '20240604',
         timeList: [
             '08:00',
             '09:00'
@@ -43,14 +43,27 @@ const onClick = (timeItem) => {
     const strDate = '' + dateValue.value
 
 
-    sendEmail({
+    // sendEmail({
+    //         targetEmailAddress: 'theoneuma9@gmail.com',
+    //         type: "customer",
+    //         scheduledTime: strDate.substring(0,16) + timeItem.timeLabel + strDate.substring(24)
+    //     }).then(({data}) => {
+    //         console.log(data);
+    //     })
+
+    fetch('/proxy/api/email', {
+        method:'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
             targetEmailAddress: 'theoneuma9@gmail.com',
             type: "customer",
             scheduledTime: strDate.substring(0,16) + timeItem.timeLabel + strDate.substring(24)
-        }).then(({data}) => {
-            console.log(data);
         })
-
+    }).then(response => response.json()).then(res => {
+        console.log(res);
+    })
     // fetch('http://127.0.0.1:8788/api/email/sendEmail', {
     //     method:'POST',
     //     mode: "no-cors",
@@ -120,8 +133,11 @@ const confirmDisable = (day, month, year) => {
             </Calendar>
         </el-col>
 
-        <el-col :span="10" v-show="displayTime">
+        <el-col :span="8" v-show="displayTime">
             <Button v-for="item in timeList" @click="onClick(item)" :disabled="item.disabled">{{ item.timeLabel }}</Button>
+        </el-col>
+        <el-col :span="6" v-show="displayTime">
+
         </el-col>
     </el-row>
     

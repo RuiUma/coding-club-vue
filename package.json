@@ -10,6 +10,8 @@
     "page": "npx wrangler pages dev"
   },
   "dependencies": {
+    "@prisma/adapter-d1": "^5.14.0",
+    "@prisma/client": "^5.14.0",
     "axios": "^1.7.2",
     "element-plus": "^2.7.3",
     "primeicons": "^7.0.0",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
+    "prisma": "^5.14.0",
     "unplugin-vue-components": "^0.27.0",
     "vite": "^5.2.8",
     "wrangler": "^3.57.1"
