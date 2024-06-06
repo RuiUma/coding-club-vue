@@ -1,14 +1,17 @@
 <script setup>
 import {ref, onMounted} from 'vue'
+
 import {sendEmail} from '@/config/http/index'
+
+import {info, warn, success, error} from '@/utils/toast';
 const dateValue = ref(new Date())
 
 const displayTime = ref(false)
 
-const onUpdate = () => {
-    console.log(dateValue.value);
-    displayTime.value = true
-}
+const scheduledTime = ref('')
+
+const emailAddress = ref('')
+const userName = ref('')
 
 const timeList = ref([
 
@@ -21,13 +24,22 @@ const timeList = ref([
         disabled: false
     }
 ])
+
+
+
+const onUpdate = () => {
+    console.log(dateValue.value);
+    displayTime.value = true
+}
+
+
 let dateTimeList = []
 
 
 onMounted(async () => {
     dateTimeList = [
     {
-        date: '20240604',
+        date: '20240610',
         timeList: [
             '08:00',
             '09:00'
@@ -37,63 +49,36 @@ onMounted(async () => {
 })
 
 
-
 const onClick = (timeItem) => {
-    console.log('click');
+    scheduledTime.value = timeItem.timeLabel
+}
+
+const onSubmit = () => {
+
+    if (scheduledTime.value.trim() === '' || emailAddress.value.trim() === '' || userName.value.trim() === '') {
+        console.log('empty fileds');
+        console.log(scheduledTime.value);
+        console.log(emailAddress.value);
+        console.log(userName.value);
+        // info('info', 'there is still empty fileds')
+        return
+    }
     const strDate = '' + dateValue.value
-
-
-    // sendEmail({
-    //         targetEmailAddress: 'theoneuma9@gmail.com',
-    //         type: "customer",
-    //         scheduledTime: strDate.substring(0,16) + timeItem.timeLabel + strDate.substring(24)
-    //     }).then(({data}) => {
-    //         console.log(data);
-    //     })
-
+    console.log(strDate.substring(0,16) + scheduledTime.value + strDate.substring(24))
     fetch('/proxy/api/email', {
         method:'POST',
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            targetEmailAddress: 'theoneuma9@gmail.com',
+            targetEmailAddress: emailAddress.value,
             type: "customer",
-            scheduledTime: strDate.substring(0,16) + timeItem.timeLabel + strDate.substring(24)
+            scheduledTime: strDate.substring(0,16) + scheduledTime.value + strDate.substring(24),
+            customerName: userName.value
         })
     }).then(response => response.json()).then(res => {
         console.log(res);
     })
-    // fetch('http://127.0.0.1:8788/api/email/sendEmail', {
-    //     method:'POST',
-    //     mode: "no-cors",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //         targetEmailAddress: 'theoneuma9@gmail.com',
-    //         type: "customer",
-    //         scheduledTime: strDate.substring(0,16) + timeItem.timeLabel + strDate.substring(24)
-    //     })
-    // }).then((response) => {
-    //     try {
-    //         response.json()
-    //     } catch (error) {
-    //         response.text()
-    //     }
-    // }).then((data) => {
-    //     console.log(data);
-    // }).catch(e => {
-    //     console.log(e);
-    // })
-
-    // const resText = await response.text()
-    // console.log(resText);
-
-    // console.log(1111111111111);
-    // const resjson = await response.json()
-    
-    // console.log(resjson);
 }
 
 const confirmDisable = (day, month, year) => {
@@ -122,9 +107,10 @@ const confirmDisable = (day, month, year) => {
 
 
 
-<template> 
+<template>
+    <br>
     <el-row>
-        <el-col :span="10">
+        <el-col :span="6">
             <Calendar v-model="dateValue" dateFormat="dd/mm/yy" inline @update:model-value="onUpdate" >
                 <template #date="slotProps">
                     <strong v-if="confirmDisable(slotProps.date.day, slotProps.date.month,slotProps.date.year)" >{{ slotProps.date.day }}</strong>
@@ -133,12 +119,37 @@ const confirmDisable = (day, month, year) => {
             </Calendar>
         </el-col>
 
-        <el-col :span="8" v-show="displayTime">
-            <Button v-for="item in timeList" @click="onClick(item)" :disabled="item.disabled">{{ item.timeLabel }}</Button>
+        <el-col :span="3">
+
+        </el-col>
+
+        <el-col :span="6" v-show="displayTime">
+            <el-select v-model="scheduledTime" placeholder="Select Time" >
+                <el-option v-for="item in timeList" @click="onClick(item)" :value="item.timeLabel" :disabled="item.disabled">{{ item.timeLabel }}</el-option>
+            </el-select>
+        </el-col>
+        <el-col :span="3">
+
         </el-col>
         <el-col :span="6" v-show="displayTime">
-
+            <InputGroup>
+                <InputGroupAddon>
+                    <i class="pi pi-envelope"></i>
+                </InputGroupAddon>
+                <InputText placeholder="Email Address" v-model="emailAddress" />
+            </InputGroup>
+            <br>
+            <InputGroup>
+                <InputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </InputGroupAddon>
+                <InputText placeholder="Name" v-model="userName" />
+            </InputGroup>
+            <br>
+            <Button label="Submit" @click="onSubmit" />
         </el-col>
     </el-row>
     
 </template>
+
+

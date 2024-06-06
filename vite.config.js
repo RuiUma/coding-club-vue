@@ -10,7 +10,12 @@ import {PrimeVueResolver} from 'unplugin-vue-components/resolvers';
 export default defineConfig({
   server:{
     proxy: {
-      '/api': 'http://127.0.0.1:3000'
+      '/proxy': {
+          target: 'http://127.0.0.1:3000',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/proxy/, '')
+      }
     }
   },
   // server: {
